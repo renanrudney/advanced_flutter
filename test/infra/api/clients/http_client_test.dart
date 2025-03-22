@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:advanced_flutter/domain/entities/domain_error.dart';
+import 'package:advanced_flutter/infra/types/json.dart';
 
 import 'package:dartx/dartx.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,12 +15,15 @@ class HttpClient {
 
   HttpClient({required this.client});
 
-  Future<void> get({ required String url, Map<String, String>? headers, Map<String, String?>? params, Map<String, String>? queryString }) async {
+  Future<T> get<T>({ required String url, Map<String, String>? headers, Map<String, String?>? params, Map<String, String>? queryString }) async {
     final allHeaders = (headers ?? {})..addAll({ 'content-type': 'application/json', 'accept': 'application/json' });
     final uri = _buildUri(url: url, params: params, queryString: queryString);
     final response = await client.get(uri, headers: allHeaders);
     switch (response.statusCode) {
-      case 200: break;
+      case 200: {
+        final data = jsonDecode(response.body);
+        return (T == JsonArr) ? data.map<Json>((e) => e as Json).toList() : data;
+      }
       case 401: throw DomainError.sessionExpired;
       default: throw DomainError.unexpected;
     }
@@ -37,6 +43,12 @@ void main() {
 
   setUp((){
     client = ClientSpy();
+    client.responseJson = '''
+      {
+        "key1": "value1",
+        "key2": "value2"
+      }
+    ''';
     url = anyString();
     sut = HttpClient(client: client);
   });
@@ -125,6 +137,25 @@ void main() {
       client.simulateServerError();
       final future = sut.get(url: url);
       expect(future, throwsA(DomainError.unexpected));
+    });
+
+    test('should return a Map', () async {
+      final data = await sut.get<Json>(url: url);
+      expect(data['key1'], 'value1');
+      expect(data['key2'], 'value2');
+    });
+
+    test('should return a List', () async {
+      client.responseJson = '''
+        [{
+          "key": "value1"
+        }, {
+          "key": "value2"
+        }]
+      ''';
+      final data = await sut.get<JsonArr>(url: url);
+      expect(data[0]['key'], 'value1');
+      expect(data[1]['key'], 'value2');
     });
   });
 }
