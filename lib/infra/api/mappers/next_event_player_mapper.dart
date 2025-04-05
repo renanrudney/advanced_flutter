@@ -1,7 +1,7 @@
 import 'package:advanced_flutter/domain/entities/next_event_player.dart';
 import 'package:advanced_flutter/infra/types/json.dart';
 
-class NextEventPlayerMapper {
+final class NextEventPlayerMapper {
   static NextEventPlayer toObject(Json json) => NextEventPlayer(
     id: json['id'],
     name: json['name'],
