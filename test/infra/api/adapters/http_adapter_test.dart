@@ -54,9 +54,9 @@ void main() {
     });
 
     test('should request with correct params', () async {
-      url = 'http://anyurl.com/:p1/:p2';
-      await sut.get(url: url, params: { 'p1': 'value1', 'p2': 'value2' });
-      expect(client.url, 'http://anyurl.com/value1/value2');
+      url = 'http://anyurl.com/:p1/:p2/:p3';
+      await sut.get(url: url, params: { 'p1': 'value1', 'p2': 'value2', 'p3': 123 });
+      expect(client.url, 'http://anyurl.com/value1/value2/123');
     });
 
     test('should request with optional param', () async {
