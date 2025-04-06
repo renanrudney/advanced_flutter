@@ -52,13 +52,16 @@ class _NextEventPageState extends State<NextEventPage> {
           if (snapshot.connectionState != ConnectionState.active) return const CircularProgressIndicator();
           if (snapshot.hasError) return buildErrorLayout();
           final viewModel = snapshot.data!;
-          return ListView(
-            children: [
-              if (viewModel.goalkeepers.isNotEmpty) ListSection(title: 'DENTRO - GOLEIROS', items: snapshot.data!.goalkeepers),
-              if (viewModel.players.isNotEmpty) ListSection(title: 'DENTRO - JOGADORES', items: snapshot.data!.players),
-              if (viewModel.out.isNotEmpty) ListSection(title: 'FORA', items: snapshot.data!.out),
-              if (viewModel.doubt.isNotEmpty) ListSection(title: 'DÚVIDA', items: snapshot.data!.doubt)
-            ]
+          return RefreshIndicator(
+            onRefresh: () async => widget.presenter.reloadNextEvent(groupId: widget.groupId),
+            child: ListView(
+              children: [
+                if (viewModel.goalkeepers.isNotEmpty) ListSection(title: 'DENTRO - GOLEIROS', items: snapshot.data!.goalkeepers),
+                if (viewModel.players.isNotEmpty) ListSection(title: 'DENTRO - JOGADORES', items: snapshot.data!.players),
+                if (viewModel.out.isNotEmpty) ListSection(title: 'FORA', items: snapshot.data!.out),
+                if (viewModel.doubt.isNotEmpty) ListSection(title: 'DÚVIDA', items: snapshot.data!.doubt)
+              ]
+            ),
           );
         }
       ),
