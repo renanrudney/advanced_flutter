@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 app.get('/api/groups/:groupId/next_event', (req, res) => {
+  if (req.params['groupId'] !== 'valid_id') return res.status(400).send(Error('invalid id'))
   res.send({
     "id": "1",
     "groupName": "Pelada Chega+",
