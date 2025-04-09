@@ -21,6 +21,9 @@ final class CacheManagerAdapter {
 
 final class FileSpy implements File {
   int existsCallCount = 0;
+  bool _fileExists = true;
+
+  void simulateEmptyFile() => _fileExists = false;
 
   @override
   File get absolute => throw UnimplementedError();
@@ -52,7 +55,7 @@ final class FileSpy implements File {
   @override
   Future<bool> exists() async {
     existsCallCount++;
-    return true;
+    return _fileExists;
   }
 
   @override
@@ -247,5 +250,11 @@ void main() {
   test('should call file.exists only once', () async {
     await sut.get(key: key);
     expect(client.file.existsCallCount, 1);
+  });
+
+  test('should return null if file is empty', () async {
+    client.file.simulateEmptyFile();
+    final json = await sut.get(key: key);
+    expect(json, isNull);
   });
 }
