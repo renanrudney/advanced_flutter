@@ -13,277 +13,164 @@ final class CacheManagerAdapter {
   CacheManagerAdapter({ required this.client });
 
   Future<dynamic> get({ required String key }) async {
-    await client.getFileFromCache(key);
+    final info = await client.getFileFromCache(key);
+    await info?.file.exists();
     return null;
   }
 }
 
 final class FileSpy implements File {
+  int existsCallCount = 0;
+
   @override
-  // TODO: implement absolute
   File get absolute => throw UnimplementedError();
 
   @override
-  // TODO: implement basename
   String get basename => throw UnimplementedError();
 
   @override
-  Future<File> copy(String newPath) {
-    // TODO: implement copy
-    throw UnimplementedError();
-  }
+  Future<File> copy(String newPath) => throw UnimplementedError();
 
   @override
-  File copySync(String newPath) {
-    // TODO: implement copySync
-    throw UnimplementedError();
-  }
+  File copySync(String newPath) => throw UnimplementedError();
 
   @override
-  Future<File> create({bool recursive = false, bool exclusive = false}) {
-    // TODO: implement create
-    throw UnimplementedError();
-  }
+  Future<File> create({bool recursive = false, bool exclusive = false}) => throw UnimplementedError();
 
   @override
-  void createSync({bool recursive = false, bool exclusive = false}) {
-    // TODO: implement createSync
-  }
+  void createSync({bool recursive = false, bool exclusive = false}) => throw UnimplementedError();
 
   @override
-  Future<FileSystemEntity> delete({bool recursive = false}) {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
+  Future<FileSystemEntity> delete({bool recursive = false}) => throw UnimplementedError();
 
   @override
-  void deleteSync({bool recursive = false}) {
-    // TODO: implement deleteSync
-  }
+  void deleteSync({bool recursive = false}) => throw UnimplementedError();
 
   @override
-  // TODO: implement dirname
   String get dirname => throw UnimplementedError();
 
   @override
-  Future<bool> exists() {
-    // TODO: implement exists
-    throw UnimplementedError();
+  Future<bool> exists() async {
+    existsCallCount++;
+    return true;
   }
 
   @override
-  bool existsSync() {
-    // TODO: implement existsSync
-    throw UnimplementedError();
-  }
+  bool existsSync() => throw UnimplementedError();
 
   @override
-  // TODO: implement fileSystem
   FileSystem get fileSystem => throw UnimplementedError();
 
   @override
-  // TODO: implement isAbsolute
   bool get isAbsolute => throw UnimplementedError();
 
   @override
-  Future<DateTime> lastAccessed() {
-    // TODO: implement lastAccessed
-    throw UnimplementedError();
-  }
+  Future<DateTime> lastAccessed() => throw UnimplementedError();
 
   @override
-  DateTime lastAccessedSync() {
-    // TODO: implement lastAccessedSync
-    throw UnimplementedError();
-  }
+  DateTime lastAccessedSync() => throw UnimplementedError();
 
   @override
-  Future<DateTime> lastModified() {
-    // TODO: implement lastModified
-    throw UnimplementedError();
-  }
+  Future<DateTime> lastModified() => throw UnimplementedError();
 
   @override
-  DateTime lastModifiedSync() {
-    // TODO: implement lastModifiedSync
-    throw UnimplementedError();
-  }
+  DateTime lastModifiedSync() => throw UnimplementedError();
 
   @override
-  Future<int> length() {
-    // TODO: implement length
-    throw UnimplementedError();
-  }
+  Future<int> length() => throw UnimplementedError();
 
   @override
-  int lengthSync() {
-    // TODO: implement lengthSync
-    throw UnimplementedError();
-  }
+  int lengthSync() => throw UnimplementedError();
 
   @override
-  Future<RandomAccessFile> open({FileMode mode = FileMode.read}) {
-    // TODO: implement open
-    throw UnimplementedError();
-  }
+  Future<RandomAccessFile> open({FileMode mode = FileMode.read}) => throw UnimplementedError();
 
   @override
-  Stream<List<int>> openRead([int? start, int? end]) {
-    // TODO: implement openRead
-    throw UnimplementedError();
-  }
+  Stream<List<int>> openRead([int? start, int? end]) => throw UnimplementedError();
 
   @override
-  RandomAccessFile openSync({FileMode mode = FileMode.read}) {
-    // TODO: implement openSync
-    throw UnimplementedError();
-  }
+  RandomAccessFile openSync({FileMode mode = FileMode.read}) => throw UnimplementedError();
 
   @override
-  IOSink openWrite({FileMode mode = FileMode.write, Encoding encoding = utf8}) {
-    // TODO: implement openWrite
-    throw UnimplementedError();
-  }
+  IOSink openWrite({FileMode mode = FileMode.write, Encoding encoding = utf8}) => throw UnimplementedError();
 
   @override
-  // TODO: implement parent
   Directory get parent => throw UnimplementedError();
 
   @override
-  // TODO: implement path
   String get path => throw UnimplementedError();
 
   @override
-  Future<Uint8List> readAsBytes() {
-    // TODO: implement readAsBytes
-    throw UnimplementedError();
-  }
+  Future<Uint8List> readAsBytes() => throw UnimplementedError();
 
   @override
-  Uint8List readAsBytesSync() {
-    // TODO: implement readAsBytesSync
-    throw UnimplementedError();
-  }
+  Uint8List readAsBytesSync() => throw UnimplementedError();
 
   @override
-  Future<List<String>> readAsLines({Encoding encoding = utf8}) {
-    // TODO: implement readAsLines
-    throw UnimplementedError();
-  }
+  Future<List<String>> readAsLines({Encoding encoding = utf8}) => throw UnimplementedError();
 
   @override
-  List<String> readAsLinesSync({Encoding encoding = utf8}) {
-    // TODO: implement readAsLinesSync
-    throw UnimplementedError();
-  }
+  List<String> readAsLinesSync({Encoding encoding = utf8}) => throw UnimplementedError();
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) {
-    // TODO: implement readAsString
-    throw UnimplementedError();
-  }
+  Future<String> readAsString({Encoding encoding = utf8}) => throw UnimplementedError();
 
   @override
-  String readAsStringSync({Encoding encoding = utf8}) {
-    // TODO: implement readAsStringSync
-    throw UnimplementedError();
-  }
+  String readAsStringSync({Encoding encoding = utf8}) => throw UnimplementedError();
 
   @override
-  Future<File> rename(String newPath) {
-    // TODO: implement rename
-    throw UnimplementedError();
-  }
+  Future<File> rename(String newPath) => throw UnimplementedError();
 
   @override
-  File renameSync(String newPath) {
-    // TODO: implement renameSync
-    throw UnimplementedError();
-  }
+  File renameSync(String newPath) => throw UnimplementedError();
 
   @override
-  Future<String> resolveSymbolicLinks() {
-    // TODO: implement resolveSymbolicLinks
-    throw UnimplementedError();
-  }
+  Future<String> resolveSymbolicLinks() => throw UnimplementedError();
 
   @override
-  String resolveSymbolicLinksSync() {
-    // TODO: implement resolveSymbolicLinksSync
-    throw UnimplementedError();
-  }
+  String resolveSymbolicLinksSync() => throw UnimplementedError();
 
   @override
-  Future setLastAccessed(DateTime time) {
-    // TODO: implement setLastAccessed
-    throw UnimplementedError();
-  }
+  Future setLastAccessed(DateTime time) => throw UnimplementedError();
 
   @override
-  void setLastAccessedSync(DateTime time) {
-    // TODO: implement setLastAccessedSync
-  }
+  void setLastAccessedSync(DateTime time) => throw UnimplementedError();
 
   @override
-  Future setLastModified(DateTime time) {
-    // TODO: implement setLastModified
-    throw UnimplementedError();
-  }
+  Future setLastModified(DateTime time) => throw UnimplementedError();
 
   @override
-  void setLastModifiedSync(DateTime time) {
-    // TODO: implement setLastModifiedSync
-  }
+  void setLastModifiedSync(DateTime time) => throw UnimplementedError();
 
   @override
-  Future<FileStat> stat() {
-    // TODO: implement stat
-    throw UnimplementedError();
-  }
+  Future<FileStat> stat() => throw UnimplementedError();
 
   @override
-  FileStat statSync() {
-    // TODO: implement statSync
-    throw UnimplementedError();
-  }
+  FileStat statSync() => throw UnimplementedError();
 
   @override
-  // TODO: implement uri
   Uri get uri => throw UnimplementedError();
 
   @override
-  Stream<FileSystemEvent> watch({int events = FileSystemEvent.all, bool recursive = false}) {
-    // TODO: implement watch
-    throw UnimplementedError();
-  }
+  Stream<FileSystemEvent> watch({int events = FileSystemEvent.all, bool recursive = false}) => throw UnimplementedError();
 
   @override
-  Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
-    // TODO: implement writeAsBytes
-    throw UnimplementedError();
-  }
+  Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) => throw UnimplementedError();
 
   @override
-  void writeAsBytesSync(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
-    // TODO: implement writeAsBytesSync
-  }
+  void writeAsBytesSync(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) => throw UnimplementedError();
 
   @override
-  Future<File> writeAsString(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) {
-    // TODO: implement writeAsString
-    throw UnimplementedError();
-  }
+  Future<File> writeAsString(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) => throw UnimplementedError();
 
   @override
-  void writeAsStringSync(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) {
-    // TODO: implement writeAsStringSync
-  }
-
+  void writeAsStringSync(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) => throw UnimplementedError();
 }
 
 final class CacheManagerSpy implements BaseCacheManager {
   int getFileFromCacheCallsCount = 0;
   String? key;
+  FileSpy file = FileSpy();
   bool _isFileInfoEmpty = false;
   DateTime _validTill = DateTime.now().add(const Duration(seconds: 2));
 
@@ -306,7 +193,7 @@ final class CacheManagerSpy implements BaseCacheManager {
   Future<FileInfo?> getFileFromCache(String key, {bool ignoreMemCache = false}) async {
     getFileFromCacheCallsCount++;
     this.key = key;
-    return _isFileInfoEmpty ? null : FileInfo(FileSpy(), FileSource.Cache, _validTill, '');
+    return _isFileInfoEmpty ? null : FileInfo(file, FileSource.Cache, _validTill, '');
   }
 
   @override
@@ -355,5 +242,10 @@ void main() {
     client.simulateOldCache();
     final json = await sut.get(key: key);
     expect(json, isNull);
+  });
+
+  test('should call file.exists only once', () async {
+    await sut.get(key: key);
+    expect(client.file.existsCallCount, 1);
   });
 }
