@@ -32,7 +32,7 @@ void main() {
   test('should return NextEvent on success', () async {
     final event = await sut.loadNextEvent(groupId: groupId);
     expect(mapper.toDtoInput, cacheClient.response);
-    expect(mapper.toDtoInputCallsCount, 1);
+    expect(mapper.toDtoCallsCount, 1);
     expect(event, mapper.toDtoOutput);
   });
 
