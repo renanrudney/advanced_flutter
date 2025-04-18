@@ -1,3 +1,4 @@
+import 'package:advanced_flutter/domain/entities/next_event.dart';
 import 'package:advanced_flutter/domain/entities/next_event_player.dart';
 import 'package:advanced_flutter/infra/mappers/mapper.dart';
 import 'package:advanced_flutter/infra/mappers/next_event_mapper.dart';
@@ -9,8 +10,11 @@ import '../../mocks/fakes.dart';
 
 final class ListMapperSpy<Dto> extends ListMapper<Dto> {
   dynamic toDtoListInput;
+  List<Dto>? toJsonArrInput;
   int toDtoListCallsCount = 0;
+  int toJsonArrCallsCount = 0;
   List<Dto> toDtoListOutput;
+  JsonArr toJsonArrOutput = anyJsonArr();
 
   ListMapperSpy({
     required this.toDtoListOutput
@@ -28,6 +32,13 @@ final class ListMapperSpy<Dto> extends ListMapper<Dto> {
 
   @override
   Json toJson(Dto dto)  => throw UnimplementedError();
+
+  @override
+  JsonArr toJsonArr(List<Dto> list) {
+    toJsonArrInput = list;
+    toJsonArrCallsCount++;
+    return toJsonArrOutput;
+  }
 }
 
 void main() {
@@ -51,5 +62,19 @@ void main() {
     expect(playerMapper.toDtoListInput, json['players']);
     expect(playerMapper.toDtoListCallsCount, 1);
     expect(dto.players, playerMapper.toDtoListOutput);
+  });
+
+  test('should map to json', () {
+    final dto = NextEvent(
+      groupName: anyString(),
+      date: DateTime(2024, 8, 29, 13, 0),
+      players: anyNextEventPlayerList()
+    );
+    final json = sut.toJson(dto);
+    expect(json['groupName'], dto.groupName);
+    expect(json['date'], "2024-08-29T13:00:00.000");
+    expect(playerMapper.toJsonArrInput, dto.players);
+    expect(playerMapper.toJsonArrCallsCount, 1);
+    expect(json['players'], playerMapper.toJsonArrOutput);
   });
 }
