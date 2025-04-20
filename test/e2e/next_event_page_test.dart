@@ -5,7 +5,7 @@ import 'package:advanced_flutter/infra/cache/repositories/load_next_event_cache_
 import 'package:advanced_flutter/infra/mappers/next_event_mapper.dart';
 import 'package:advanced_flutter/infra/repositories/load_next_event_from_api_with_cache_fallback_repo.dart';
 import 'package:advanced_flutter/main/factories/infra/mappers/next_event_mapper_factory.dart';
-import 'package:advanced_flutter/presentation/presenters/rx/next_event_rx_presenter.dart';
+import 'package:advanced_flutter/presentation/rx/next_event_rx_presenter.dart';
 import 'package:advanced_flutter/ui/pages/next_event_page.dart';
 
 import 'package:flutter/material.dart';
