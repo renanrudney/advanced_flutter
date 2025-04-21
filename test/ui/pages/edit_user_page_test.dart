@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../mocks/fakes.dart';
+
+final class EditUserViewModel {
+  final bool isNaturalPerson;
+
+  EditUserViewModel({
+    required this.isNaturalPerson
+  });
+}
+
 final class EditUserPage extends StatelessWidget {
-  final Future<void> Function() loadUserData;
+  final Future<EditUserViewModel> Function() loadUserData;
 
   const EditUserPage({
     super.key,
@@ -11,24 +21,67 @@ final class EditUserPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    loadUserData();
-    return Container();
+    return FutureBuilder<EditUserViewModel>(
+      future: loadUserData(),
+      builder: (context, snapshot) {
+        return Scaffold(
+          body: Column(
+            children: [
+              RadioListTile(
+                title: const Text('Pessoa física'),
+                value: true,
+                groupValue: snapshot.data?.isNaturalPerson,
+                onChanged: (value) {}
+              ),
+              RadioListTile(
+                title: const Text('Pessoa jurídica'),
+                value: false,
+                groupValue: snapshot.data?.isNaturalPerson,
+                onChanged: (value) {}
+              ),
+            ],
+          )
+        );
+      }
+    );
   }
 }
 
-final class LoadUserDataMock {
+final class LoadUserDataSpy {
   var isCalled = false;
+  var response = EditUserViewModel(isNaturalPerson: anyBool());
 
-  Future<void> call() async {
+  Future<EditUserViewModel> call() async {
     isCalled = true;
+    return response;
   }
 }
 
 void main() {
   testWidgets('should load user data on page init', (tester) async {
-    final loadUserData = LoadUserDataMock();
-    final sut = EditUserPage(loadUserData: loadUserData.call);
+    final loadUserData = LoadUserDataSpy();
+    final sut = MaterialApp(home: EditUserPage(loadUserData: loadUserData.call));
     await tester.pumpWidget(sut);
     expect(loadUserData.isCalled, true);
+  });
+
+  testWidgets('should check natural person', (tester) async {
+    final loadUserData = LoadUserDataSpy();
+    loadUserData.response = EditUserViewModel(isNaturalPerson: true);
+    final sut = MaterialApp(home: EditUserPage(loadUserData: loadUserData.call));
+    await tester.pumpWidget(sut);
+    await tester.pump();
+    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa física'), matching: find.byType(RadioListTile<bool>))).checked, true);
+    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa jurídica'), matching: find.byType(RadioListTile<bool>))).checked, false);
+  });
+
+  testWidgets('should check legal person', (tester) async {
+    final loadUserData = LoadUserDataSpy();
+    loadUserData.response = EditUserViewModel(isNaturalPerson: false);
+    final sut = MaterialApp(home: EditUserPage(loadUserData: loadUserData.call));
+    await tester.pumpWidget(sut);
+    await tester.pump();
+    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa física'), matching: find.byType(RadioListTile<bool>))).checked, false);
+    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa jurídica'), matching: find.byType(RadioListTile<bool>))).checked, true);
   });
 }
