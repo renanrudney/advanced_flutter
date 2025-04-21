@@ -48,11 +48,11 @@ final class EditUserPage extends StatelessWidget {
 }
 
 final class LoadUserDataSpy {
-  var isCalled = false;
+  var callsCount = 0;
   var response = EditUserViewModel(isNaturalPerson: anyBool());
 
   Future<EditUserViewModel> call() async {
-    isCalled = true;
+    callsCount++;
     return response;
   }
 }
@@ -68,22 +68,29 @@ void main() {
 
   testWidgets('should load user data on page init', (tester) async {
     await tester.pumpWidget(sut);
-    expect(loadUserData.isCalled, true);
+    expect(loadUserData.callsCount, 1);
   });
 
   testWidgets('should check natural person', (tester) async {
     loadUserData.response = EditUserViewModel(isNaturalPerson: true);
     await tester.pumpWidget(sut);
     await tester.pump();
-    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa física'), matching: find.byType(RadioListTile<bool>))).checked, true);
-    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa jurídica'), matching: find.byType(RadioListTile<bool>))).checked, false);
+    expect(tester.naturalPersonRadio.checked, true);
+    expect(tester.legalPersonRadio.checked, false);
   });
 
   testWidgets('should check legal person', (tester) async {
     loadUserData.response = EditUserViewModel(isNaturalPerson: false);
     await tester.pumpWidget(sut);
     await tester.pump();
-    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa física'), matching: find.byType(RadioListTile<bool>))).checked, false);
-    expect(tester.widget<RadioListTile>(find.ancestor(of: find.text('Pessoa jurídica'), matching: find.byType(RadioListTile<bool>))).checked, true);
+    expect(tester.naturalPersonRadio.checked, false);
+    expect(tester.legalPersonRadio.checked, true);
   });
+}
+
+extension EditUserPageExtension on WidgetTester {
+  Finder get naturalPersonFinder => find.ancestor(of: find.text('Pessoa física'), matching: find.byType(RadioListTile<bool>));
+  Finder get legalPersonFinder => find.ancestor(of: find.text('Pessoa jurídica'), matching: find.byType(RadioListTile<bool>));
+  RadioListTile get naturalPersonRadio => widget(naturalPersonFinder);
+  RadioListTile get legalPersonRadio => widget(legalPersonFinder);
 }
