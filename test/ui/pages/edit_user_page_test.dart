@@ -68,6 +68,7 @@ final class EditUserPage extends StatelessWidget {
 
 final class LoadUserDataSpy {
   var callsCount = 0;
+  Error? _error;
   var _response = EditUserViewModel(isNaturalPerson: anyBool(), showCpf: anyBool(), showCnpj: anyBool());
 
   void mockResponse({ bool? isNaturalPerson, bool? showCpf, bool? showCnpj, String? cpf, String? cnpj }) {
@@ -80,8 +81,11 @@ final class LoadUserDataSpy {
     );
   }
 
+  void mockError() => _error = Error();
+
   Future<EditUserViewModel> call() async {
     callsCount++;
+    if (_error != null) throw _error!;
     return _response;
   }
 }
@@ -105,6 +109,14 @@ void main() {
   });
 
   testWidgets('should handle spinner on load', (tester) async {
+    await tester.pumpWidget(sut);
+    expect(tester.spinnerFinder, findsOneWidget);
+    await tester.pump();
+    expect(tester.spinnerFinder, findsNothing);
+  });
+
+  testWidgets('should handle spinner on error', (tester) async {
+    loadUserData.mockError();
     await tester.pumpWidget(sut);
     expect(tester.spinnerFinder, findsOneWidget);
     await tester.pump();
