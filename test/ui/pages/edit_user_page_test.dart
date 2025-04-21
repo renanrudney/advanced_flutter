@@ -9,6 +9,7 @@ final class EditUserViewModel {
   bool showCnpj;
   bool isCpfValid;
   bool isCnpjValid;
+  bool isFormValid;
   String? cpf;
   String? cnpj;
 
@@ -18,6 +19,7 @@ final class EditUserViewModel {
     required this.showCnpj,
     required this.isCpfValid,
     required this.isCnpjValid,
+    required this.isFormValid,
     this.cpf,
     this.cnpj
   });
@@ -70,6 +72,10 @@ final class EditUserPage extends StatelessWidget {
                   errorText: viewModel.isCnpjValid ? null : 'Valor inválido'
                 ),
               ),
+              ElevatedButton(
+                onPressed: viewModel.isFormValid ?  () {} : null,
+                child: Text('Salvar')
+              )
             ],
           )
         );
@@ -81,15 +87,16 @@ final class EditUserPage extends StatelessWidget {
 final class LoadUserDataSpy {
   var callsCount = 0;
   Error? _error;
-  var _response = EditUserViewModel(isNaturalPerson: anyBool(), showCpf: anyBool(), showCnpj: anyBool(), isCpfValid: anyBool(), isCnpjValid: anyBool());
+  var _response = EditUserViewModel(isNaturalPerson: anyBool(), showCpf: anyBool(), showCnpj: anyBool(), isCpfValid: anyBool(), isCnpjValid: anyBool(), isFormValid: anyBool());
 
-  void mockResponse({ bool? isNaturalPerson, bool? showCpf, bool? showCnpj, String? cpf, String? cnpj, bool? isCpfValid, bool? isCnpjValid }) {
+  void mockResponse({ bool? isNaturalPerson, bool? showCpf, bool? showCnpj, String? cpf, String? cnpj, bool? isCpfValid, bool? isCnpjValid, bool? isFormValid }) {
     _response = EditUserViewModel(
       isNaturalPerson: isNaturalPerson ?? anyBool(),
       showCpf: showCpf ?? anyBool(),
       showCnpj: showCnpj ?? anyBool(),
       isCpfValid: isCpfValid ?? anyBool(),
       isCnpjValid: isCnpjValid ?? anyBool(),
+      isFormValid: isFormValid ?? anyBool(),
       cpf: cpf,
       cnpj: cnpj
     );
@@ -243,6 +250,20 @@ void main() {
     await tester.pump();
     expect(tester.cnpjErrorFinder, findsNothing);
   });
+
+  testWidgets('should enable save button', (tester) async {
+    loadUserData.mockResponse(isFormValid: true);
+    await tester.pumpWidget(sut);
+    await tester.pump();
+    expect(tester.saveButton.onPressed, isNotNull);
+  });
+
+  testWidgets('should disable save button', (tester) async {
+    loadUserData.mockResponse(isFormValid: false);
+    await tester.pumpWidget(sut);
+    await tester.pump();
+    expect(tester.saveButton.onPressed, isNull);
+  });
 }
 
 extension EditUserPageExtension on WidgetTester {
@@ -254,8 +275,10 @@ extension EditUserPageExtension on WidgetTester {
   Finder get errorFinder => find.text('Erro');
   Finder get cpfErrorFinder => find.descendant(of: cpfFinder, matching: find.text('Valor inválido'));
   Finder get cnpjErrorFinder => find.descendant(of: cnpjFinder, matching: find.text('Valor inválido'));
+  Finder get saveButtonFinder => find.ancestor(of: find.text('Salvar'), matching: find.byType(ElevatedButton));
   RadioListTile get naturalPersonRadio => widget(naturalPersonFinder);
   RadioListTile get legalPersonRadio => widget(legalPersonFinder);
   TextFormField get cpfTextField => widget(cpfFinder);
   TextFormField get cnpjTextField => widget(cnpjFinder);
+  ElevatedButton get saveButton => widget(saveButtonFinder);
 }
