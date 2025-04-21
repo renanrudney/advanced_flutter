@@ -33,29 +33,31 @@ final class EditUserPage extends StatelessWidget {
       future: loadUserData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
+        if (snapshot.hasError) return const Center(child: Text('Erro'));
+        final viewModel = snapshot.data!;
         return Scaffold(
           body: Column(
             children: [
               RadioListTile(
                 title: const Text('Pessoa física'),
                 value: true,
-                groupValue: snapshot.data?.isNaturalPerson,
+                groupValue: viewModel.isNaturalPerson,
                 onChanged: (value) {}
               ),
               RadioListTile(
                 title: const Text('Pessoa jurídica'),
                 value: false,
-                groupValue: snapshot.data?.isNaturalPerson,
+                groupValue: viewModel.isNaturalPerson,
                 onChanged: (value) {}
               ),
-              if (snapshot.data?.showCpf == true) TextFormField(
+              if (viewModel.showCpf) TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
-                initialValue: snapshot.data?.cpf,
+                initialValue: viewModel.cpf,
                 decoration: const InputDecoration(labelText: 'CPF'),
               ),
-              if (snapshot.data?.showCnpj == true) TextFormField(
+              if (viewModel.showCnpj) TextFormField(
                 keyboardType: TextInputType.numberWithOptions(),
-                initialValue: snapshot.data?.cnpj,
+                initialValue: viewModel.cnpj,
                 decoration: const InputDecoration(labelText: 'CNPJ'),
               ),
             ],
@@ -121,6 +123,13 @@ void main() {
     expect(tester.spinnerFinder, findsOneWidget);
     await tester.pump();
     expect(tester.spinnerFinder, findsNothing);
+  });
+
+  testWidgets('should show error', (tester) async {
+    loadUserData.mockError();
+    await tester.pumpWidget(sut);
+    await tester.pump();
+    expect(tester.errorFinder, findsOneWidget);
   });
 
   testWidgets('should check natural person', (tester) async {
@@ -202,6 +211,7 @@ extension EditUserPageExtension on WidgetTester {
   Finder get cpfFinder => find.ancestor(of: find.text('CPF'), matching: find.byType(TextFormField));
   Finder get cnpjFinder => find.ancestor(of: find.text('CNPJ'), matching: find.byType(TextFormField));
   Finder get spinnerFinder => find.byType(CircularProgressIndicator);
+  Finder get errorFinder => find.text('Erro');
   RadioListTile get naturalPersonRadio => widget(naturalPersonFinder);
   RadioListTile get legalPersonRadio => widget(legalPersonFinder);
   TextFormField get cpfTextField => widget(cpfFinder);
