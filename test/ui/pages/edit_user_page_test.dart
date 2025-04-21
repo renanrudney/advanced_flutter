@@ -4,10 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../mocks/fakes.dart';
 
 final class EditUserViewModel {
-  final bool isNaturalPerson;
+  bool isNaturalPerson;
+  bool showCpf;
 
   EditUserViewModel({
-    required this.isNaturalPerson
+    required this.isNaturalPerson,
+    required this.showCpf
   });
 }
 
@@ -39,6 +41,10 @@ final class EditUserPage extends StatelessWidget {
                 groupValue: snapshot.data?.isNaturalPerson,
                 onChanged: (value) {}
               ),
+              if (snapshot.data?.showCpf == true) TextFormField(
+                keyboardType: TextInputType.numberWithOptions(),
+                decoration: const InputDecoration(labelText: 'CPF'),
+              ),
             ],
           )
         );
@@ -49,11 +55,18 @@ final class EditUserPage extends StatelessWidget {
 
 final class LoadUserDataSpy {
   var callsCount = 0;
-  var response = EditUserViewModel(isNaturalPerson: anyBool());
+  var _response = EditUserViewModel(isNaturalPerson: anyBool(), showCpf: anyBool());
+
+  void mockResponse({ bool? isNaturalPerson, bool? showCpf }) {
+    _response = EditUserViewModel(
+      isNaturalPerson: isNaturalPerson ?? anyBool(),
+      showCpf: showCpf ?? anyBool()
+    );
+  }
 
   Future<EditUserViewModel> call() async {
     callsCount++;
-    return response;
+    return _response;
   }
 }
 
@@ -72,7 +85,7 @@ void main() {
   });
 
   testWidgets('should check natural person', (tester) async {
-    loadUserData.response = EditUserViewModel(isNaturalPerson: true);
+    loadUserData.mockResponse(isNaturalPerson: true);
     await tester.pumpWidget(sut);
     await tester.pump();
     expect(tester.naturalPersonRadio.checked, true);
@@ -80,17 +93,32 @@ void main() {
   });
 
   testWidgets('should check legal person', (tester) async {
-    loadUserData.response = EditUserViewModel(isNaturalPerson: false);
+    loadUserData.mockResponse(isNaturalPerson: false);
     await tester.pumpWidget(sut);
     await tester.pump();
     expect(tester.naturalPersonRadio.checked, false);
     expect(tester.legalPersonRadio.checked, true);
+  });
+
+  testWidgets('should show cpf', (tester) async {
+    loadUserData.mockResponse(showCpf: true);
+    await tester.pumpWidget(sut);
+    await tester.pump();
+    expect(tester.cpfFinder, findsOneWidget);
+  });
+
+  testWidgets('should hide cpf', (tester) async {
+    loadUserData.mockResponse(showCpf: false);
+    await tester.pumpWidget(sut);
+    await tester.pump();
+    expect(tester.cpfFinder, findsNothing);
   });
 }
 
 extension EditUserPageExtension on WidgetTester {
   Finder get naturalPersonFinder => find.ancestor(of: find.text('Pessoa física'), matching: find.byType(RadioListTile<bool>));
   Finder get legalPersonFinder => find.ancestor(of: find.text('Pessoa jurídica'), matching: find.byType(RadioListTile<bool>));
+  Finder get cpfFinder => find.text('CPF');
   RadioListTile get naturalPersonRadio => widget(naturalPersonFinder);
   RadioListTile get legalPersonRadio => widget(legalPersonFinder);
 }
